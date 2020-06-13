@@ -1,5 +1,6 @@
 ﻿using EVEMarket.model;
 using EVEMarket.until;
+using KuaiDi;
 using Newtonsoft.Json.Linq;
 using NPOI.SS.UserModel.Charts;
 using System;
@@ -29,6 +30,53 @@ namespace EVEMarket
             this.progressBar1.Maximum = dt.Rows.Count;
             this.progressBar1.Step = 0;
             ThreadPool.QueueUserWorkItem((object obj) =>
+            {
+                List<Goods> list = (List<Goods>)List_DataTable_Helper.DataTableToListModel<Goods>.ConvertToModel(dt);
+                MultipleThread.RunTask<Goods>(list, d =>
+                {
+                    string typeId = d.typeID;
+                    QuicklookResult result = GetOrders(typeId);
+                    if (null != result)
+                    {
+                        Way way = GetWay(result);
+                        if (null != way && way.priceValue > 0)
+                        {
+                            AddItemToListBox(this.listBox1, $"物品名称：{way.name};起点:{way.sell.station_name};价格:{way.sell.price};数量:{way.sell.vol_remain};终点:{way.buy.station_name};价格:{way.buy.price};数量:{way.buy.vol_remain};差价{way.priceValue}");
+                            AddItemToListBox(this.listBox1, "===================================================");
+                        }
+                    }
+                    this.Invoke(new Action(() =>
+                    {
+                        ++this.progressBar1.Step;
+                        this.label3.Text = $"{this.progressBar1.Maximum - this.progressBar1.Step}";
+                    }));
+                   
+                },20);
+                bestWay.Sort((a, b) => { var sortIndex = Convert.ToInt32(b.priceValue - a.priceValue); return sortIndex; });
+                this.Invoke(new Action(() =>
+                {
+                    this.listBox1.Items.Clear();
+                }));
+                foreach (var way in bestWay)
+                {
+                    if (way.priceValue > 0)
+                    {
+                        AddItemToListBox(this.listBox1, $"物品名称：{way.name};起点:{way.sell.station_name};价格:{way.sell.price};数量:{way.sell.vol_remain};终点:{way.buy.station_name};价格:{way.buy.price};数量:{way.buy.vol_remain};差价{way.priceValue}");
+                        AddItemToListBox(this.listBox1, "===================================================");
+                    }
+
+                }
+                MessageBox.Show("OK");
+            });
+
+            
+
+
+
+
+
+
+          /*  ThreadPool.QueueUserWorkItem((object obj) =>
             {
                 foreach (DataRow row in dt.Rows)
                 {
@@ -62,7 +110,7 @@ namespace EVEMarket
 
                 }
                 MessageBox.Show("OK");
-            });
+            });*/
         }
 
         private void AddItemToListBox(ListBox box, string content)
@@ -139,13 +187,23 @@ namespace EVEMarket
         {
             List<Way> result = new List<Way>();
             bestWay.ForEach(i => result.Add(i));
-            if (!string.IsNullOrEmpty(txtStart.Text))
+
+            if (this.checkBox1.Checked)
             {
-                result = bestWay.FindAll(a => a.sell.station_name.Contains(txtStart.Text));
+                result = bestWay.FindAll(a => a.sell.station_name.Contains(txtStart.Text) && a.buy.station_name.Contains(txtStart.Text));
+                result = bestWay.FindAll(a => a.sell.station_name.Contains(txtEnd.Text) && a.buy.station_name.Contains(txtEnd.Text));
             }
-            if(!string.IsNullOrEmpty(txtEnd.Text))
+            else
             {
-                result = result.FindAll(a => a.buy.station_name.Contains(txtEnd.Text));
+
+                if (!string.IsNullOrEmpty(txtStart.Text))
+                {
+                    result = bestWay.FindAll(a => a.sell.station_name.Contains(txtStart.Text));
+                }
+                if (!string.IsNullOrEmpty(txtEnd.Text))
+                {
+                    result = result.FindAll(a => a.buy.station_name.Contains(txtEnd.Text));
+                }
             }
             if(!string.IsNullOrEmpty(txtBuyNum.Text))
             {
@@ -174,6 +232,28 @@ namespace EVEMarket
 
             }
             MessageBox.Show("OK");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.listBox1.Items.Clear();
+            foreach (var way in bestWay)
+            {
+                if (way.priceValue > 0)
+                {
+                    AddItemToListBox(this.listBox1, $"物品名称：{way.name};起点:{way.sell.station_name};价格:{way.sell.price};数量:{way.sell.vol_remain};终点:{way.buy.station_name};价格:{way.buy.price};数量:{way.buy.vol_remain};差价{way.priceValue}");
+                    AddItemToListBox(this.listBox1, "===================================================");
+                }
+
+            }
+            MessageBox.Show("OK");
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string tmp = this.txtEnd.Text;
+            this.txtEnd.Text = this.txtStart.Text;
+            this.txtStart.Text = tmp;
         }
     }
     public class Way

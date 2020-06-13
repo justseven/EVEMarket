@@ -75,12 +75,15 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="model\Goods.cs" />
     <Compile Include="model\QuicklookResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="until\DataTableRenderToExcel.cs" />
     <Compile Include="until\EVEApi.cs" />
     <Compile Include="until\HttpHelper.cs" />
+    <Compile Include="until\List_DataTable_Helper.cs" />
+    <Compile Include="until\MultipleThread.cs" />
     <Compile Include="until\XML_JSON.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
