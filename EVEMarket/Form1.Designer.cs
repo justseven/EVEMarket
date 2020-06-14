@@ -34,7 +34,6 @@
             this.txtStart = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label3 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -48,6 +47,12 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtPriceValue = new System.Windows.Forms.TextBox();
+            this.txtThreadNum = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.button5 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -102,14 +107,6 @@
             this.label2.Size = new System.Drawing.Size(29, 12);
             this.label2.TabIndex = 7;
             this.label2.Text = "终点";
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar1.Location = new System.Drawing.Point(0, 291);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(800, 20);
-            this.progressBar1.TabIndex = 8;
             // 
             // label3
             // 
@@ -227,11 +224,69 @@
             this.checkBox1.Text = "贸易路线";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(400, 165);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(29, 12);
+            this.label8.TabIndex = 23;
+            this.label8.Text = "差价";
+            // 
+            // txtPriceValue
+            // 
+            this.txtPriceValue.Location = new System.Drawing.Point(476, 156);
+            this.txtPriceValue.Name = "txtPriceValue";
+            this.txtPriceValue.Size = new System.Drawing.Size(158, 21);
+            this.txtPriceValue.TabIndex = 22;
+            this.txtPriceValue.Text = "9000000";
+            // 
+            // txtThreadNum
+            // 
+            this.txtThreadNum.Location = new System.Drawing.Point(423, 245);
+            this.txtThreadNum.Name = "txtThreadNum";
+            this.txtThreadNum.Size = new System.Drawing.Size(158, 21);
+            this.txtThreadNum.TabIndex = 24;
+            this.txtThreadNum.Text = "100";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(364, 248);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(41, 12);
+            this.label9.TabIndex = 25;
+            this.label9.Text = "线程数";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar1.Location = new System.Drawing.Point(0, 288);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(800, 23);
+            this.progressBar1.TabIndex = 26;
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(683, 188);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 27;
+            this.button5.Text = "清空";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 579);
+            this.Controls.Add(this.button5);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.txtThreadNum);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.txtPriceValue);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -245,7 +300,6 @@
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtStart);
@@ -266,7 +320,6 @@
         private System.Windows.Forms.TextBox txtStart;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label4;
@@ -280,6 +333,12 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txtPriceValue;
+        private System.Windows.Forms.TextBox txtThreadNum;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button button5;
     }
 }
 
