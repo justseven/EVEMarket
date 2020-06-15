@@ -32,6 +32,28 @@ namespace EVEMarket.until
             HttpResult result = http.GetHtml(item);
             return result.Html;
         }
+
+        public static string getRoute(string origin, string destination)
+        {
+            string url = ConfigurationManager.AppSettings["route"];
+            url = string.Format(url, origin, destination);
+            HttpHelper http = new HttpHelper();
+            HttpItem item = new HttpItem()
+            {
+                URL = url,//URL这里都是测试     必需项
+                Method = "get",//URL     可选项 默认为Get
+                Allowautoredirect = true,//是否根据301跳转     可选项   
+                UserAgent = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)",////用户的浏览器类型，版本，操作系统     可选项有默认值  
+                ContentType = "text/html,application/json",
+                ResultType = ResultType.String,
+                Encoding = System.Text.Encoding.GetEncoding("UTF-8")
+            };
+            item.Header.Add("Accept-Language", "zh-CN");
+            item.Header.Add("Accept-Encoding", "gzip, deflate");
+            //得到HTML代码
+            HttpResult result = http.GetHtml(item);
+            return result.Html;
+        }
     }
 
     public class Param

@@ -2,6 +2,7 @@
 using EVEMarket.until;
 using KuaiDi;
 using Newtonsoft.Json.Linq;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel.Charts;
 using System;
 using System.Collections.Generic;
@@ -24,20 +25,22 @@ namespace EVEMarket
             InitializeComponent();
         }
         List<Way> bestWay = new List<Way>();
-
+        DataTable goodsDt = data.DataLoad.GetGoods();
+        DataTable kjzDt = data.DataLoad.GetKJZ();
+        DataTable xxlbDT = data.DataLoad.GetXXLB();
         private void button1_Click(object sender, EventArgs e)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
             bestWay.Clear();
             int count = Convert.ToInt32(txtThreadNum.Text);
-            DataTable dt = data.DataLoad.GetGoods();
-            this.progressBar1.Maximum = dt.Rows.Count;
+            
+            this.progressBar1.Maximum = goodsDt.Rows.Count;
             this.progressBar1.Step = 1;
             this.progressBar1.Value = 0;
             ThreadPool.QueueUserWorkItem((object obj) =>
             {
-                List<Goods> list = (List<Goods>)List_DataTable_Helper.DataTableToListModel<Goods>.ConvertToModel(dt);
+                List<Goods> list = (List<Goods>)List_DataTable_Helper.DataTableToListModel<Goods>.ConvertToModel(goodsDt);
                 MultipleThread.RunTask<Goods>(list, d =>
                 {
                     string typeId = d.typeID;
@@ -67,7 +70,7 @@ namespace EVEMarket
                 {
                     if (way.priceValue > 0)
                     {
-                        AddItemToListBox(this.listBox1, $"物品名称：{way.name};起点:{way.sell.station_name};价格:{way.sell.price};数量:{way.sell.vol_remain};终点:{way.buy.station_name};价格:{way.buy.price};数量:{way.buy.vol_remain};差价{way.priceValue}");
+                        AddItemToListBox(this.listBox1, $"物品名称：{way.name};起点:{way.sell.station_name};价格:{way.sell.price};数量:{way.sell.vol_remain};终点:{way.buy.station_name};价格:{way.buy.price};数量:{way.buy.vol_remain};差价{way.priceValue};跳跃:{way.routeConut}");
                         AddItemToListBox(this.listBox1, "===================================================");
                     }
 
@@ -185,6 +188,7 @@ namespace EVEMarket
                             way.sell = sell;
                             way.priceValue = value;
                             pricevalue = value;
+                            way.routeConut = setRouteCount(sell.station_name, buy.station_name);
                         }
 
                     }
@@ -194,6 +198,41 @@ namespace EVEMarket
             if(null!=way && way.priceValue>0)
                 bestWay.Add(way);
             return way;
+        }
+
+        private int setRouteCount(string sell,string buy)
+        {
+            string origin = getSystemID(sell);
+            string destination = getSystemID(buy);
+            if(!string.IsNullOrEmpty(origin) && !string.IsNullOrEmpty(destination))
+                return getJumpCount(origin, destination);
+            return -1;
+        }
+
+        private string getSystemID(string name)
+        {
+            string xxName = name.Split('-')[0].Split(' ')[0].Trim();
+            DataRow rows = xxlbDT.Rows.Find(xxName);//  Select($"空間站ID='{kjzDt}'");
+            
+            if(null!=rows)
+            {
+                return rows["星系ID"].ToString();
+            }
+            return "";
+        }
+
+        private int getJumpCount(string origin, string destination)
+        {
+            try
+            {
+                string res = EVEApi.getRoute(origin, destination);
+                JArray array = Newtonsoft.Json.JsonConvert.DeserializeObject<JArray>(res);
+                return array.Count;
+            }
+            catch
+            {
+                return -1;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -243,7 +282,7 @@ namespace EVEMarket
             {
                 if (way.priceValue > 0)
                 {
-                    AddItemToListBox(this.listBox1, $"物品名称：{way.name};起点:{way.sell.station_name};价格:{way.sell.price};数量:{way.sell.vol_remain};终点:{way.buy.station_name};价格:{way.buy.price};数量:{way.buy.vol_remain};差价{way.priceValue}");
+                    AddItemToListBox(this.listBox1, $"物品名称：{way.name};起点:{way.sell.station_name};价格:{way.sell.price};数量:{way.sell.vol_remain};终点:{way.buy.station_name};价格:{way.buy.price};数量:{way.buy.vol_remain};差价{way.priceValue};跳跃:{way.routeConut}");
                     AddItemToListBox(this.listBox1, "===================================================");
                 }
 
@@ -284,6 +323,12 @@ namespace EVEMarket
                 }
             }
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            JArray array = Newtonsoft.Json.JsonConvert.DeserializeObject<JArray>(EVEApi.getRoute("60013867", "30003830"));
+            int i = array.Count;
+        }
     }
     public class Way
     {
@@ -292,15 +337,7 @@ namespace EVEMarket
         public OrderItem buy { get; set; }
         public decimal priceValue { get; set; }
 
-        private decimal totalPrice;
-        public decimal TotalPrice { get
-            {
-                if (Convert.ToDecimal(sell.vol_remain) < Convert.ToDecimal(buy.vol_remain))
-                    return priceValue * Convert.ToDecimal(sell.vol_remain);
-                else
-                    return priceValue * Convert.ToDecimal(buy.vol_remain);
-            }
-            set { totalPrice = value; }
-        }
+        public int routeConut { get; set; }
+       
     }
 }

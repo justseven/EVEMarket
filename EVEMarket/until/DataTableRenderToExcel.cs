@@ -221,9 +221,10 @@ namespace Web4BDC.Tools
 
                 for (int j = row.FirstCellNum; j < cellCount; j++)
                 {
-                            dataRow[j] = row.GetCell(j).ToString();
+                    dataRow[j] = row.GetCell(j).ToString();
+                    
                 }
-
+                table.Rows.Add(dataRow);
             }
             workbook = null;
             sheet = null;
